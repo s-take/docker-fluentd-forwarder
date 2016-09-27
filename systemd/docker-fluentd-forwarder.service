@@ -1,0 +1,14 @@
+[Unit]
+Description=Dockerized td-agent
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+Restart=always
+ExecStartPre=/usr/bin/docker pull stake/docker-fluentd-forwarder
+ExecStart=/usr/bin/docker run --rm -e "td_server=<td-agent_forward_ip>" --name %n -h %H -p 24224:24224 stake/docker-fluentd-forwarder
+ExecStop=/usr/bin/docker rm -f %n
+
+[Install]
+WantedBy=multi-user.target
